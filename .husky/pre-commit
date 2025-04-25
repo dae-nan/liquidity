@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Hook to check for sensitive files
+if git diff --cached --name-only | grep -E "\.(pem|key|p12|pfx|cert|crt|cer|der|secret)$|id_(rsa|dsa|ed25519)" > /dev/null; then
+  echo "ERROR: Attempting to commit sensitive files."
+  echo "The following sensitive files were found:"
+  git diff --cached --name-only | grep -E "\.(pem|key|p12|pfx|cert|crt|cer|der|secret)$|id_(rsa|dsa|ed25519)"
+  echo "Please remove these files from your commit."
+  exit 1
+fi
+
+# Execute regular lint-staged
+npx lint-staged
